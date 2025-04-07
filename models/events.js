@@ -16,6 +16,7 @@ const eventSchema = mongoose.Schema(
     },
 
     imageurls: [],
+    currentbookings: [],
     date: {
       type: Date,
       required: true,

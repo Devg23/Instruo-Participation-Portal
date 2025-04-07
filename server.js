@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 const diconfig = require("./db");
 const eventsroute = require("./routes/eventsroute");
 const userRoute = require("./routes/userRoute");
-const bookingsRoute = require("./routes/bookingsroute"); // ✅ Imported but not used
+const bookingsRoute = require("./routes/bookingsroute");
 
 // Middleware
 app.use(cors({ origin: "http://localhost:3000" }));

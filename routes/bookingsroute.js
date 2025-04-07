@@ -1,28 +1,57 @@
+// routes/bookingsroute.js
+
 const express = require("express");
 const router = express.Router();
 const Booking = require("../models/bookings");
 
 router.post("/bookevent", async (req, res) => {
-  const { event, userid, ondate, totalamount } = req.body;
+  const {
+    userid,
+    username,
+    eventid,
+    event,
+    ondate,
+    totalamount,
+    transactionid,
+  } = req.body;
 
-  if (!event || !userid || !ondate || !totalamount) {
+  console.log("📩 Booking request received:", req.body);
+
+  // Validate required fields
+  if (
+    !userid ||
+    !username ||
+    !eventid ||
+    !event ||
+    !ondate ||
+    !totalamount ||
+    !transactionid
+  ) {
+    console.log("❌ Missing fields in request");
     return res.status(400).json({ error: "All fields are required!" });
   }
 
   try {
     const newBooking = new Booking({
-      event: event.name,
-      eventid: event.id,
       userid,
+      username,
+      eventid,
+      event,
       ondate,
-      totalamount,
-      transactionid: "1234",
+      totalamount: Number(totalamount),
+      transactionid, // ✅ Include it here
     });
 
     const savedBooking = await newBooking.save();
-    res.send("Room booked successfully!");
+    console.log("✅ Booking saved successfully:", savedBooking);
+
+    return res.status(200).json({
+      message: "Booking successful",
+      savedBooking,
+    });
   } catch (error) {
-    return res.status(400).json({ error });
+    console.error("🔥 Error saving booking:", error.message);
+    return res.status(500).json({ error: "Failed to save booking" });
   }
 });
 
