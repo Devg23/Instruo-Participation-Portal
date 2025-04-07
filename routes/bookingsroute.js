@@ -1,8 +1,7 @@
-// routes/bookingsroute.js
-
 const express = require("express");
 const router = express.Router();
 const Booking = require("../models/bookings");
+const Event = require("../models/events");
 
 router.post("/bookevent", async (req, res) => {
   const {
@@ -15,9 +14,8 @@ router.post("/bookevent", async (req, res) => {
     transactionid,
   } = req.body;
 
-  console.log("📩 Booking request received:", req.body);
+  console.log("Booking request received:", req.body);
 
-  // Validate required fields
   if (
     !userid ||
     !username ||
@@ -27,7 +25,7 @@ router.post("/bookevent", async (req, res) => {
     !totalamount ||
     !transactionid
   ) {
-    console.log("❌ Missing fields in request");
+    console.log("Missing fields in request");
     return res.status(400).json({ error: "All fields are required!" });
   }
 
@@ -37,14 +35,24 @@ router.post("/bookevent", async (req, res) => {
       username,
       eventid,
       event,
-      ondate,
+      ondate: new Date(ondate), // ✅ fixed date
       totalamount: Number(totalamount),
-      transactionid, // ✅ Include it here
+      transactionid,
     });
 
     const savedBooking = await newBooking.save();
-    console.log("✅ Booking saved successfully:", savedBooking);
 
+    const eventtemp = await Event.findOne({ _id: eventid });
+
+    eventtemp.currentbookings.push({
+      bookingid: savedBooking._id, // ✅ booking ID, not event ID
+      ondate: new Date(ondate),
+      status: "booked", // ✅ fixed status
+    });
+
+    await eventtemp.save();
+
+    console.log("Booking saved successfully:", savedBooking);
     return res.status(200).json({
       message: "Booking successful",
       savedBooking,

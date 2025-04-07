@@ -14,9 +14,21 @@ const eventSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-
     imageurls: [],
-    currentbookings: [],
+    currentbookings: [
+      {
+        bookingid: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "bookings",
+        },
+        ondate: {
+          type: Date,
+        },
+        status: {
+          type: String,
+        },
+      },
+    ],
     date: {
       type: Date,
       required: true,
@@ -25,14 +37,13 @@ const eventSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-
     description: {
       type: String,
       required: true,
     },
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 );
 
